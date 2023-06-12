@@ -240,7 +240,7 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 10,),
         Expanded(
           child: TextFrameTranslated(
-              result: _translatedText,
+            result: _translatedText,
           ),
         ),
       ],
