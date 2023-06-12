@@ -95,6 +95,8 @@ class _HomePageState extends State<HomePage> {
         _originalText.add([name, word, ]);
         print('$name: $word');
       }
+      else
+        _originalText.add([l, ]);
     }
 
     if (mounted)
@@ -122,11 +124,15 @@ class _HomePageState extends State<HomePage> {
     });
 
     _translatedText = [];
-    for (List<String> word in _originalText)
-      if (word.length == 2 && word[1].isNotEmpty){
-        String result = await GoogleTranslatorController().translateText(word[1]);
-        _translatedText.add([word[0], result, ]);
+    for (List<String> word in _originalText) {
+      if (word.length == 2 && word[1].isNotEmpty) {
+        String result = await GoogleTranslatorController().translateText(
+            word[1]);
+        _translatedText.add([word[0], result,]);
       }
+      else if (word.length == 1)
+        _translatedText.add([word[0].trim(), ]);
+    }
 
     _translating = false;
     _textChanged = false;

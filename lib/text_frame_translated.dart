@@ -10,9 +10,12 @@ class TextFrameTranslated extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     String allLines = '';
-    for (List<String> values in result)
+    for (List<String> values in result) {
       if (values.length == 2)
         allLines += "'${values[0]}': '${values[1]}',\n";
+      else if (values.length == 1)
+      allLines += '${values[0]}\n';
+    }
     allLines += "\n";
 
     return Padding(
