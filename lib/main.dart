@@ -88,7 +88,7 @@ class _HomePageState extends State<HomePage> {
     List<String> lines = newText.split('\n');
     for (String l in lines){
       List<String> parts = l.split(':');
-      if (parts.length == 2){
+      if (parts.length == 2 && parts[0].trim().isNotEmpty && parts[1].trim().isNotEmpty){
         String name = parts[0].replaceAll("'", '').replaceAll(",", '').trim();
         String word = parts[1].replaceAll("'", '').replaceAll(",", '').trim();
 
@@ -160,10 +160,6 @@ class _HomePageState extends State<HomePage> {
 
     _loadSavedApiKey();
 
-    _translatedText = [
-      ['111111', '222222'],
-      ['3333333', '444444444'],
-    ];
   }
 
   @override
@@ -191,8 +187,15 @@ class _HomePageState extends State<HomePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        LocaleSelector(
-          localeChanged: _sourceLocaleChanged,
+        Row(
+          children: [
+            LocaleSelector(
+              localeChanged: _sourceLocaleChanged,
+            ),
+            const Spacer(),
+            Text('${_originalText.length} lines', style: MyTheme.TEXT_STYLE_BODY,),
+            const Spacer(),
+          ],
         ),
         const SizedBox(height: 10,),
         Expanded(
