@@ -1,12 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:localizations_translator/custom_classes/button_info.dart';
 import 'package:localizations_translator/custom_widgets/buttons/default_button.dart';
+import 'package:localizations_translator/google_translate/google_translator_controller.dart';
 import 'package:localizations_translator/my_shared_preferences.dart';
 import 'package:localizations_translator/my_theme.dart';
 import 'package:localizations_translator/text_frame_original.dart';
 import 'package:localizations_translator/text_frame_translated.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
+  if (Platform.isWindows || Platform.isLinux) {
+    sqfliteFfiInit();
+  }
+  databaseFactory = databaseFactoryFfi;
   runApp(const MyApp());
 }
 
@@ -45,6 +53,9 @@ class _HomePageState extends State<HomePage> {
     _apiTextController.text = _savedApiKey;
     _keySaved = true;
     });
+
+    if (_savedApiKey.isNotEmpty)
+      _initTranslator();
   }
   
   Future<void> _saveNewApiKey() async{
@@ -67,14 +78,19 @@ class _HomePageState extends State<HomePage> {
   Future<void> _originalTextChanged(String newText) async{
   }
 
-  Future<void> _test() async{
+  Future<void> _initTranslator() async{
+    GoogleTranslatorController.init(
+      _savedApiKey,
+      const Locale('en'),
+      translateTo: const Locale('pt'),
+      cacheDuration: const Duration(days: 7),
+    );
 
 
+    String result = await GoogleTranslatorController().translateText('exit');
 
 
-
-
-
+    print('result: $result');
 
   }
 
@@ -83,8 +99,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     _loadSavedApiKey();
-
-    _test();
   }
 
   @override
