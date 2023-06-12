@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:localizations_translator/custom_classes/button_info.dart';
 import 'package:localizations_translator/custom_widgets/buttons/default_button.dart';
 import 'package:localizations_translator/google_translate/google_translator_controller.dart';
+import 'package:localizations_translator/locale_selector.dart';
 import 'package:localizations_translator/my_shared_preferences.dart';
 import 'package:localizations_translator/my_theme.dart';
 import 'package:localizations_translator/text_frame_original.dart';
@@ -45,6 +46,10 @@ class _HomePageState extends State<HomePage> {
   final TextEditingController _apiTextController = TextEditingController();
   String _savedApiKey = '';
   bool _keySaved = false;
+  String _selectedFrom = 'en';
+  String _selectedTo = 'pt';
+  List<List<String>> _originalText = [];
+  List<List<String>> _translatedText = [];
 
   Future<void> _loadSavedApiKey() async{
     _savedApiKey = await MySharedPreferences.getGcpApiKey();
@@ -76,22 +81,57 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _originalTextChanged(String newText) async{
+    _originalText = [];
+    List<String> lines = newText.split('\n');
+    for (String l in lines){
+      List<String> parts = l.split(':');
+      if (parts.length == 2){
+        String name = parts[0].replaceAll("'", '').replaceAll(",", '').trim();
+        String word = parts[1].replaceAll("'", '').replaceAll(",", '').trim();
+
+        _originalText.add([name, word, ]);
+        print('$name: $word');
+      }
+    }
+
+    if (mounted)
+      setState(() {});
   }
 
   Future<void> _initTranslator() async{
     GoogleTranslatorController.init(
       _savedApiKey,
-      const Locale('en'),
-      translateTo: const Locale('pt'),
+      Locale(_selectedFrom),
+      translateTo: Locale(_selectedTo),
       cacheDuration: const Duration(days: 7),
     );
 
-
     String result = await GoogleTranslatorController().translateText('exit');
-
-
     print('result: $result');
 
+  }
+
+  Future<void> _translate() async{
+    print('translating: ${_originalText.length} lines');
+
+  }
+
+  void _sourceLocaleChanged(String newLocale){
+    _selectedFrom = newLocale;
+    _initTranslator();
+
+    if (mounted)
+      setState(() {});
+    print('new source locale: $_selectedFrom');
+  }
+
+  void _destLocaleChanged(String newLocale){
+    _selectedTo = newLocale;
+    _initTranslator();
+
+    if (mounted)
+      setState(() {});
+    print('new dest locale: $_selectedTo');
   }
 
   @override
@@ -112,17 +152,58 @@ class _HomePageState extends State<HomePage> {
           Expanded(
             child: Row(
               children: [
-                Expanded(
-                  child: TextFrameOriginal(
-                    textChanged: _originalTextChanged,
-                  ),
-                ),
-                const Expanded(child: TextFrameTranslated()),
+                Expanded(child: _getOriginalForm()),
+                Expanded(child: _getTranslatedForm()),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _getOriginalForm(){
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        LocaleSelector(
+          localeChanged: _sourceLocaleChanged,
+        ),
+        const SizedBox(height: 10,),
+        Expanded(
+          child: TextFrameOriginal(
+            textChanged: _originalTextChanged,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _getTranslatedForm(){
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: LocaleSelector(
+                localeChanged: _destLocaleChanged,
+                initialValue: _selectedTo,
+              ),
+            ),
+            const SizedBox(width: 10,),
+            DefaultButton(
+              buttonInfo: ButtonInfo(
+                text: 'TRANSLATE',
+                onTap: _translate,
+                enabled: _originalText.isNotEmpty,
+              ),
+            ),
+            const SizedBox(width: 20,),
+          ],
+        ),
+        const SizedBox(height: 10,),
+        const Expanded(child: TextFrameTranslated()),
+      ],
     );
   }
   

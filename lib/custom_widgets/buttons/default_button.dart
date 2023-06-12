@@ -46,7 +46,7 @@ class DefaultButton extends StatelessWidget{
     Color color = foregroundColor ?? buttonInfo?.color ?? MyTheme.TEXT_COLOR_BUTTON;
     Color backColor = backgroundColor ?? buttonInfo?.backColor ?? MyTheme.COLOR_BUTTON_BACKGROUND;
     Color colorDisabled = foregroundColorDisabled ?? color;
-    Color backColorDisabled = backgroundColorDisabled ?? Colors.transparent;
+    Color backColorDisabled = backgroundColorDisabled ?? MyTheme.TEXT_COLOR_DISABLED;
     Color progressIndColor = progressIndicatorColor ?? MyTheme.PRIMARY_COLOR;
     double? fontSize = textSize;
     if (fontSize == null){

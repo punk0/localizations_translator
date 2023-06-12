@@ -17,7 +17,7 @@ class MyTheme {
   static const Color BACKGROUND_SEC = Color(0xFF333333);
 
   static const double TEXT_SIZE_BODY = 12;
-  static const double TEXT_SIZE_TITLE = 24;
+  static const double TEXT_SIZE_TITLE = 16;
 
   static const TextStyle TEXT_STYLE_TITLE =
   TextStyle(
