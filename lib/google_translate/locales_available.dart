@@ -459,6 +459,8 @@ class LocalesAvailable{
     for(String key in LANGUAGE_BY_LOCALE.keys)
       result.add('$key - ${LANGUAGE_BY_LOCALE[key] ?? ''}');
 
+    result.sort();
+
     return result;
   }
 
