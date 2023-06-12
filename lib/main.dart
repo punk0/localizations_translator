@@ -137,6 +137,7 @@ class _HomePageState extends State<HomePage> {
   void _sourceLocaleChanged(String newLocale){
     _selectedFrom = newLocale;
     _initTranslator();
+    _textChanged = true;
 
     if (mounted)
       setState(() {});
@@ -146,6 +147,7 @@ class _HomePageState extends State<HomePage> {
   void _destLocaleChanged(String newLocale){
     _selectedTo = newLocale;
     _initTranslator();
+    _textChanged = true;
 
     if (mounted)
       setState(() {});
