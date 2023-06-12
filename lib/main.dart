@@ -50,6 +50,8 @@ class _HomePageState extends State<HomePage> {
   String _selectedTo = 'pt';
   List<List<String>> _originalText = [];
   List<List<String>> _translatedText = [];
+  bool _translating = false;
+  bool _textChanged = false;
 
   Future<void> _loadSavedApiKey() async{
     _savedApiKey = await MySharedPreferences.getGcpApiKey();
@@ -81,6 +83,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _originalTextChanged(String newText) async{
+    _textChanged = true;
     _originalText = [];
     List<String> lines = newText.split('\n');
     for (String l in lines){
@@ -114,6 +117,21 @@ class _HomePageState extends State<HomePage> {
   Future<void> _translate() async{
     print('translating: ${_originalText.length} lines');
 
+    setState(() {
+      _translating = true;
+    });
+
+    _translatedText = [];
+    for (List<String> word in _originalText)
+      if (word.length == 2 && word[1].isNotEmpty){
+        String result = await GoogleTranslatorController().translateText(word[1]);
+        _translatedText.add([word[0], result, ]);
+      }
+
+    _translating = false;
+    _textChanged = false;
+    if (mounted)
+      setState(() {});
   }
 
   void _sourceLocaleChanged(String newLocale){
@@ -139,6 +157,11 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     _loadSavedApiKey();
+
+    _translatedText = [
+      ['111111', '222222'],
+      ['3333333', '444444444'],
+    ];
   }
 
   @override
@@ -181,6 +204,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _getTranslatedForm(){
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Row(
           children: [
@@ -195,14 +219,19 @@ class _HomePageState extends State<HomePage> {
               buttonInfo: ButtonInfo(
                 text: 'TRANSLATE',
                 onTap: _translate,
-                enabled: _originalText.isNotEmpty,
+                enabled: _originalText.isNotEmpty && _textChanged,
               ),
+              isLoading: _translating,
             ),
             const SizedBox(width: 20,),
           ],
         ),
         const SizedBox(height: 10,),
-        const Expanded(child: TextFrameTranslated()),
+        Expanded(
+          child: TextFrameTranslated(
+              result: _translatedText,
+          ),
+        ),
       ],
     );
   }
