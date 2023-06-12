@@ -131,7 +131,7 @@ class _HomePageState extends State<HomePage> {
         _translatedText.add([word[0], result,]);
       }
       else if (word.length == 1)
-        _translatedText.add([word[0].trim(), ]);
+        _translatedText.add([word[0], ]);
     }
 
     _translating = false;
