@@ -1,19 +1,10 @@
 
 import 'package:dio/dio.dart';
-import 'package:dio_http_cache_lts/dio_http_cache_lts.dart';
+//import 'package:dio_http_cache_lts/dio_http_cache_lts.dart';
 
 class GoogleTranslatorRepository {
   final Dio _dio = Dio(BaseOptions(
       baseUrl: "https://translation.googleapis.com/language/translate/v2"));
-
-  GoogleTranslatorRepository() {
-    // Set cache data for Dio
-    _dio
-      ..interceptors.add(DioCacheManager(CacheConfig(
-          baseUrl:
-          "https://translation.googleapis.com/language/translate/v2"))
-          .interceptor);
-  }
 
   Future<String> translate(
       {required String source,
@@ -28,8 +19,7 @@ class GoogleTranslatorRepository {
             "source": source,
             "target": target,
             "format": "text"
-          },
-          options: buildCacheOptions(cacheDuration));
+          });
 
       if (response.statusCode == 200 &&
           response.data?["data"]?["translations"] != null &&
