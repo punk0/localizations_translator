@@ -51,4 +51,5 @@ class _LocaleSelectorState extends State<LocaleSelector> {
       ),
     );
   }
+
 }

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:localizations_translator/custom_classes/button_info.dart';
@@ -9,13 +8,8 @@ import 'package:localizations_translator/my_shared_preferences.dart';
 import 'package:localizations_translator/my_theme.dart';
 import 'package:localizations_translator/text_frame_original.dart';
 import 'package:localizations_translator/text_frame_translated.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
-  if (Platform.isWindows || Platform.isLinux) {
-    sqfliteFfiInit();
-  }
-  databaseFactory = databaseFactoryFfi;
   runApp(const MyApp());
 }
 
